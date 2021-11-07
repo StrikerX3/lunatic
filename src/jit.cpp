@@ -53,12 +53,13 @@ struct JIT final : CPU {
     block_cache.Flush(address_lo, address_hi);
   }
 
-  void Run(int cycles) override {
+  int Run(int cycles) override {
     if (IsWaitingForIRQ() && !IRQLine()) {
-      return;
+      return 0;
     }
 
     cycles_to_run += cycles;
+    int start_cycles = cycles_to_run;
 
     while (cycles_to_run > 0) {
       if (IRQLine()) {
@@ -75,10 +76,12 @@ struct JIT final : CPU {
       cycles_to_run = backend.Call(*basic_block, cycles_to_run);
 
       if (IsWaitingForIRQ()) {
+        int cycles_executed = start_cycles - cycles_to_run;
         cycles_to_run = 0;
-        return;
+        return cycles_executed;
       }
     }
+    return start_cycles - cycles_to_run;
   }
 
   auto GetGPR(GPR reg) const -> u32 override {
