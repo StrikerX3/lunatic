@@ -37,6 +37,10 @@ struct JIT final : CPU {
     wait_for_irq = true;
   }
 
+  void CancelIRQWait() override {
+    wait_for_irq = false;
+  }
+
   auto IsWaitingForIRQ() -> bool override {
     return wait_for_irq;
   }
