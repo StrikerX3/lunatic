@@ -75,6 +75,7 @@ struct CPU {
   virtual void Reset() = 0;
   virtual auto IRQLine() -> bool& = 0;
   virtual void WaitForIRQ() = 0;
+  virtual void CancelIRQWait() = 0;
   virtual auto IsWaitingForIRQ() -> bool = 0;
   virtual void ClearICache() = 0;
   virtual void ClearICacheRange(u32 address_lo, u32 address_hi) = 0;
